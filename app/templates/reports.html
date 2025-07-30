@@ -1,0 +1,51 @@
+
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>{% block title %}Reports{% endblock %}</h1>
+
+    <h2>Open Tickets for Technician</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Status</th>
+                <th>Urgency</th>
+                <th>Created At</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ticket in open_tickets %}
+                <tr>
+                    <td>{{ ticket['title'] }}</td>
+                    <td>{{ ticket['description'] }}</td>
+                    <td>{{ ticket['status'] }}</td>
+                    <td>{{ ticket['urgency'] }}</td>
+                    <td>{{ ticket['created_at'] }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h2>Average Resolution Time</h2>
+    <p>{{ avg_resolution_time }} days</p>
+
+    <h2>Tickets by Urgency</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Urgency</th>
+                <th>Count</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in urgency_report %}
+                <tr>
+                    <td>{{ row['urgency'] }}</td>
+                    <td>{{ row['count'] }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

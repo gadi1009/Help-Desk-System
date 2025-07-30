@@ -1,0 +1,28 @@
+
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>{% block title %}Tickets{% endblock %}</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Status</th>
+                <th>Urgency</th>
+                <th>Created At</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ticket in tickets %}
+                <tr>
+                    <td>{{ ticket['title'] }}</td>
+                    <td>{{ ticket['description'] }}</td>
+                    <td>{{ ticket['status'] }}</td>
+                    <td>{{ ticket['urgency'] }}</td>
+                    <td>{{ ticket['created_at'] }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

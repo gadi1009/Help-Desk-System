@@ -1,0 +1,18 @@
+
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>{% block title %}Register{% endblock %}</h1>
+    <form method="post">
+        <label for="username">Username</label>
+        <input name="username" id="username" required>
+        <label for="password">Password</label>
+        <input type="password" name="password" id="password" required>
+        <label for="role">Role</label>
+        <select name="role" id="role">
+            <option value="employee">Employee</option>
+            <option value="technician">Technician</option>
+        </select>
+        <button type="submit">Register</button>
+    </form>
+{% endblock %}
