@@ -1,6 +1,7 @@
 import sqlite3
 from flask import Flask, render_template, request, redirect, url_for, g, flash, session
 import time
+from utils.email_notifier import send_notification_email
 
 LOGIN_ATTEMPT_LIMIT = 5
 LOGIN_ATTEMPT_WINDOW = 300 # seconds (5 minutes)
@@ -144,6 +145,12 @@ def create():
                 (title, description, urgency, 1) # Replace 1 with the actual user_id
             )
             db.commit()
+            
+            # Send email notification for new ticket
+            email_subject = f"New Ticket Created: {title}"
+            email_body = f"A new ticket has been created with the following details:\n\nTitle: {title}\nDescription: {description}\nUrgency: {urgency}\n\nPlease attend to it as soon as possible."
+            send_notification_email("admin@example.com", email_subject, email_body) # Replace with actual admin email
+            
             return redirect(url_for('index'))
 
     return render_template('create_ticket.html')
