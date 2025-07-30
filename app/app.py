@@ -1,6 +1,10 @@
 
 import sqlite3
-from flask import Flask, render_template, request, redirect, url_for, g, flash
+from flask import Flask, render_template, request, redirect, url_for, g, flash, session
+import time
+
+LOGIN_ATTEMPT_LIMIT = 5
+LOGIN_ATTEMPT_WINDOW = 300 # seconds (5 minutes)
 from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
@@ -50,8 +54,24 @@ def register():
 
         if not username:
             error = 'Username is required.'
+        elif len(username) < 4 or len(username) > 20:
+            error = 'Username must be between 4 and 20 characters.'
+        elif not username.isalnum():
+            error = 'Username must contain only letters and numbers.'
         elif not password:
             error = 'Password is required.'
+        elif len(password) < 8:
+            error = 'Password must be at least 8 characters long.'
+        elif not any(char.isdigit() for char in password):
+            error = 'Password must contain at least one digit.'
+        elif not any(char.isupper() for char in password):
+            error = 'Password must contain at least one uppercase letter.'
+        elif not any(char.islower() for char in password):
+            error = 'Password must contain at least one lowercase letter.'
+        elif not any(char in "!@#$%^&*()_+-=[]{}|;:,.<>?/~`" for char in password):
+            error = 'Password must contain at least one special character.'
+        elif role not in ['admin', 'technician', 'user']: # Assuming these are the valid roles
+            error = 'Invalid role selected.'
 
         if error is None:
             try:
@@ -75,18 +95,31 @@ def login():
         password = request.form['password']
         db = get_db()
         error = None
-        user = db.execute(
-            'SELECT * FROM users WHERE username = ?',
-            (username,)
-        ).fetchone()
 
-        if user is None:
-            error = 'Incorrect username.'
-        elif not check_password_hash(user['password'], password):
-            error = 'Incorrect password.'
+        # Rate limiting check
+        if 'login_attempts' not in session:
+            session['login_attempts'] = {}
+        
+        attempts = session['login_attempts'].get(request.remote_addr, {'count': 0, 'last_attempt': 0})
 
-        if error is None:
-            return redirect(url_for('index'))
+        if time.time() - attempts['last_attempt'] < LOGIN_ATTEMPT_WINDOW and attempts['count'] >= LOGIN_ATTEMPT_LIMIT:
+            error = 'Too many login attempts. Please try again later.'
+        else:
+            user = db.execute(
+                'SELECT * FROM users WHERE username = ?',
+                (username,)
+            ).fetchone()
+
+            if user is None or not check_password_hash(user['password'], password):
+                error = 'Incorrect username or password.'
+                attempts['count'] += 1
+                attempts['last_attempt'] = time.time()
+                session['login_attempts'][request.remote_addr] = attempts
+            else:
+                # Successful login, reset attempts for this IP
+                if request.remote_addr in session['login_attempts']:
+                    del session['login_attempts'][request.remote_addr]
+                return redirect(url_for('index'))
 
         flash(error)
 

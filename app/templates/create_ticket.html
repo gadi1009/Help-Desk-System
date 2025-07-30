@@ -2,18 +2,28 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1>{% block title %}Create a New Ticket{% endblock %}</h1>
-    <form method="post">
-        <label for="title">Title</label>
-        <input name="title" id="title" value="{{ request.form['title'] }}" required>
-        <label for="description">Description</label>
-        <textarea name="description" id="description">{{ request.form['description'] }}</textarea>
-        <label for="urgency">Urgency</label>
-        <select name="urgency" id="urgency">
-            <option value="Low">Low</option>
-            <option value="Medium">Medium</option>
-            <option value="High">High</option>
-        </select>
-        <button type="submit">Create</button>
-    </form>
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <h1 class="mb-4">{% block title %}Create a New Ticket{% endblock %}</h1>
+            <form method="post">
+                <div class="mb-3">
+                    <label for="title" class="form-label">Title</label>
+                    <input type="text" class="form-control" name="title" id="title" value="{{ request.form['title'] }}" required>
+                </div>
+                <div class="mb-3">
+                    <label for="description" class="form-label">Description</label>
+                    <textarea class="form-control" name="description" id="description" rows="5">{{ request.form['description'] }}</textarea>
+                </div>
+                <div class="mb-3">
+                    <label for="urgency" class="form-label">Urgency</label>
+                    <select class="form-select" name="urgency" id="urgency">
+                        <option value="Low">Low</option>
+                        <option value="Medium">Medium</option>
+                        <option value="High">High</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Create</button>
+            </form>
+        </div>
+    </div>
 {% endblock %}
