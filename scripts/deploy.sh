@@ -2,17 +2,16 @@
 
 echo "Starting deployment process..."
 
-# Placeholder for actual deployment steps:
-# 1. Pull latest code
-# git pull origin master
+# Install/update dependencies
+pip install -r ../requirements.txt
 
-# 2. Install/update dependencies (if any)
-# pip install -r requirements.txt
+# Run database migrations
+./db_migrate.sh
 
-# 3. Run database migrations
-# ./scripts/db_migrate.sh
-
-# 4. Restart application services (e.g., Gunicorn, Flask development server)
-# systemctl restart help_desk_app
+# Restart application services (example using pkill and nohup)
+# This is a simple way to restart a development server.
+# For production, you would use a process manager like Gunicorn or uWSGI.
+pkill -f "flask run"
+nohup flask run &
 
 echo "Deployment process completed."

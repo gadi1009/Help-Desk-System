@@ -1,7 +1,8 @@
 import sqlite3
 from flask import Flask, render_template, request, redirect, url_for, g, flash, session
 import time
-from ..utils.email_notifier import send_notification_email
+from utils.email_notifier import send_notification_email
+# Constants for login attempt limits
 
 LOGIN_ATTEMPT_LIMIT = 5
 LOGIN_ATTEMPT_WINDOW = 300 # seconds (5 minutes)
